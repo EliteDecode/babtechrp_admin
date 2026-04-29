@@ -1,13 +1,13 @@
 import AllUsersTables from "@/components/dashboard_components/tables/AllUserssTables";
+import PageHeader from "@/components/ui/PageHeader";
 import Loader from "@/helpers/Loader";
 import { FetchUserDetails } from "@/services/features/user/userSlice";
 import { AppDispatch } from "@/store";
-import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 const Users = () => {
-  const { isLoading } = useSelector((state: any) => state.user);
+  const { isLoading, users } = useSelector((state: any) => state.user);
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -16,15 +16,17 @@ const Users = () => {
 
   return (
     <div>
-      <Box>
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <Box className="mt-5 border-gray-200 shadow-md border p-5 rounded-lg sm:overflow-x-auto overflow-x-scroll">
-            <AllUsersTables />
-          </Box>
-        )}
-      </Box>
+      <PageHeader
+        title="All Users"
+        subtitle={`${users?.length ?? 0} user${users?.length !== 1 ? "s" : ""} registered`}
+      />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+          <AllUsersTables />
+        </div>
+      )}
     </div>
   );
 };

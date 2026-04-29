@@ -1,14 +1,11 @@
 import AllStudentTables from "@/components/dashboard_components/tables/AllStudentsTables";
-import { Button } from "@/components/ui/button";
+import PageHeader from "@/components/ui/PageHeader";
 import Loader from "@/helpers/Loader";
 import { FetchStudentDetails } from "@/services/features/student/studentSlice";
-
 import { AppDispatch } from "@/store";
-import { Box } from "@mui/material";
 import { useEffect } from "react";
 import { RiUserAddFill } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
-
 import { Link } from "react-router-dom";
 
 const Students = () => {
@@ -21,27 +18,25 @@ const Students = () => {
 
   return (
     <div>
-      <Box>
-        <Box>
-          <Link to="/dashboard/students/add-student">
-            <Button variant="icon">
-              <RiUserAddFill size={15} className="text-secondary font-bold" />
-              <span
-                className="text-black font-bold text-xs uppercase text-secondary"
-                style={{ fontFamily: "eczar" }}>
-                Add Students
-              </span>
-            </Button>
+      <PageHeader
+        title="All Students"
+        subtitle={`${students?.length ?? 0} student${students?.length !== 1 ? "s" : ""} enrolled`}
+        action={
+          <Link
+            to="/dashboard/students/add-student"
+            className="inline-flex items-center gap-2 bg-primary text-white text-xs font-semibold px-4 py-2.5 rounded-xl hover:bg-primary/90 active:scale-[0.98] transition-all">
+            <RiUserAddFill size={14} />
+            Add Student
           </Link>
-        </Box>
-        {isLoading ? (
-          <Loader />
-        ) : (
-          <Box className="mt-5 border-gray-200 shadow-md border p-5 rounded-lg sm:overflow-x-auto overflow-x-scroll">
-            <AllStudentTables data={students} />
-          </Box>
-        )}
-      </Box>
+        }
+      />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+          <AllStudentTables data={students} />
+        </div>
+      )}
     </div>
   );
 };

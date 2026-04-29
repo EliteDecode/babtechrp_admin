@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./SideBar";
 import Header from "./Header";
@@ -15,40 +14,37 @@ const DashboardLayout = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    if (isSuccess && message == "Login Successfully") {
-      toast.success("Login Successfull");
+    if (isSuccess && message === "Login Successfully") {
+      toast.success("Login Successful");
       dispatch(reset());
     }
   }, [isSuccess]);
 
   return (
-    <div>
-      <Box
-        className={`flex flex-wrap h-screen  ${
-          isSidebar ? "overflow-y-hidden" : "overflow-y-scroll"
+    <div className="h-screen flex overflow-hidden">
+      {/* Sidebar overlay on mobile */}
+      {isSidebar && (
+        <div
+          className="fixed inset-0 bg-black/30 z-20 md:hidden"
+          onClick={() => setIsSidebar(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className={`sidebar transit z-30 flex-shrink-0 ${
+          isSidebar ? "showSidebar" : ""
         }`}>
-        <Box
-          className={`sidebar transit  bg-white z-30 ${
-            isSidebar ? "showSidebar  " : "sm:w-[0%]"
-          }`}
-          sx={{
-            left: {
-              xs: isSidebar ? "0" : "-100%",
-              sm: isSidebar ? "0" : "-100%", // Keep sidebar hidden for small screens
-            },
-          }}>
-          <Sidebar setIsSidebar={setIsSidebar} isSidebar={isSidebar} />
-        </Box>
-        <Box
-          className={`${
-            isSidebar ? "header" : "sm:w-[100%]"
-          } header transit  bg-white w-[100%]`}>
-          <Header setIsSidebar={setIsSidebar} isSidebar={isSidebar} />
-          <Box className=" sm:p-5 p-1 h-screen w-full overflow-y-scroll bg-[#fafafa] ">
-            <Outlet />
-          </Box>
-        </Box>
-      </Box>
+        <Sidebar setIsSidebar={setIsSidebar} isSidebar={isSidebar} />
+      </div>
+
+      {/* Main column */}
+      <div className="header transit flex flex-col flex-1 overflow-hidden bg-[#f8fafc]">
+        <Header setIsSidebar={setIsSidebar} isSidebar={isSidebar} />
+        <main className="flex-1 overflow-y-auto sm:p-5 p-3">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 };

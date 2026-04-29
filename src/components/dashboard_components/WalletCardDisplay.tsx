@@ -1,113 +1,85 @@
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { InfoCardDisplayProps } from "@/types/majorTypes";
-import { Box, Grid } from "@mui/material";
+import { IWithdrawal } from "@/types/wallet.types";
+import { TrendingDown, TrendingUp } from "lucide-react";
+import { useSelector } from "react-redux";
 
 import approvedIcon from "@/assets/icons/check-mark.png";
 import pendingIcon from "@/assets/icons/time-management.png";
 import declinedIcon from "@/assets/icons/declined.png";
 
-import { IWithdrawal } from "@/types/wallet.types";
-import { IoIosTrendingDown, IoIosTrendingUp } from "react-icons/io";
-import { useSelector } from "react-redux";
-
 const WalletCardDisplay = () => {
   const { withdrawals } = useSelector((state: any) => state.wallet);
 
-  const pendingWithdrawals = withdrawals
-    ?.filter((withdrawal: IWithdrawal) => withdrawal?.status === "pending")
-    ?.reduce((acc: number, curr: IWithdrawal) => acc + curr.amount, 0);
-  const approvedWithdrawals = withdrawals
-    ?.filter((withdrawal: IWithdrawal) => withdrawal?.status === "approved")
-    ?.reduce((acc: number, curr: IWithdrawal) => acc + curr.amount, 0);
-  const declinedWithdrawals = withdrawals
-    ?.filter((withdrawal: IWithdrawal) => withdrawal?.status === "declined")
-    ?.reduce((acc: number, curr: IWithdrawal) => acc + curr.amount, 0);
-  const totalWithdrawals =
-    pendingWithdrawals + approvedWithdrawals + declinedWithdrawals;
+  const pending = withdrawals
+    ?.filter((w: IWithdrawal) => w?.status === "pending")
+    ?.reduce((acc: number, curr: IWithdrawal) => acc + curr.amount, 0) || 0;
+  const approved = withdrawals
+    ?.filter((w: IWithdrawal) => w?.status === "approved")
+    ?.reduce((acc: number, curr: IWithdrawal) => acc + curr.amount, 0) || 0;
+  const declined = withdrawals
+    ?.filter((w: IWithdrawal) => w?.status === "declined")
+    ?.reduce((acc: number, curr: IWithdrawal) => acc + curr.amount, 0) || 0;
+  const total = pending + approved + declined;
 
-  const approvedPercentage =
-    totalWithdrawals > 0
-      ? ((approvedWithdrawals / totalWithdrawals) * 100)?.toFixed(2)
-      : "0.00";
-  const pendingPercentage =
-    totalWithdrawals > 0
-      ? ((pendingWithdrawals / totalWithdrawals) * 100)?.toFixed(2)
-      : "0.00";
-  const declinedPercentage =
-    totalWithdrawals > 0
-      ? ((declinedWithdrawals / totalWithdrawals) * 100)?.toFixed(2)
-      : "0.00";
+  const approvedPct = total > 0 ? ((approved / total) * 100).toFixed(1) : "0.0";
+  const pendingPct = total > 0 ? ((pending / total) * 100).toFixed(1) : "0.0";
+  const declinedPct = total > 0 ? ((declined / total) * 100).toFixed(1) : "0.0";
 
-  const WalletCardContents: InfoCardDisplayProps[] = [
+  const cards = [
     {
-      title: "Approved Transactions",
-      description: `₦ ${approvedWithdrawals?.toLocaleString()}`,
-      link: "/dashboard/teachers",
-      buttonText: approvedPercentage || "0.00", // Total earnings is always 100%
-      image: approvedIcon,
+      title: "Approved",
+      value: `₦${approved.toLocaleString()}`,
+      pct: `${approvedPct}%`,
+      positive: true,
+      icon: approvedIcon,
+      color: "bg-green-50",
     },
     {
-      title: "Pending Transactions",
-      description: `₦ ${pendingWithdrawals?.toLocaleString()}`,
-      link: "/dashboard/teachers",
-      buttonText: `-${pendingPercentage}` || "0.00",
-      image: pendingIcon,
+      title: "Pending",
+      value: `₦${pending.toLocaleString()}`,
+      pct: `${pendingPct}%`,
+      positive: false,
+      icon: pendingIcon,
+      color: "bg-orange-50",
     },
     {
-      title: "Declined Transactions",
-      description: `₦ ${declinedWithdrawals?.toLocaleString()}`,
-      link: "/dashboard/students",
-      buttonText: `-${declinedPercentage}%`,
-      image: declinedIcon,
+      title: "Declined",
+      value: `₦${declined.toLocaleString()}`,
+      pct: `${declinedPct}%`,
+      positive: false,
+      icon: declinedIcon,
+      color: "bg-red-50",
     },
   ];
 
   return (
-    <Grid item sm={12} md={12} className="">
-      <Grid container spacing={2}>
-        {WalletCardContents.map((item, index) => (
-          <Grid item xs={12} sm={12} md={12} key={index} className="">
-            <Card className="border-none">
-              <Box className="flex justify-between items-center">
-                <CardHeader>
-                  <CardTitle
-                    className="text-[12px] text-gray-500"
-                    style={{ fontFamily: "eczar" }}>
-                    {item.title}
-                  </CardTitle>
-                  <CardDescription className="text-primary text-[22px] font-bold">
-                    {item.description}
-                  </CardDescription>
-                </CardHeader>
-                <Box className="p-6">
-                  <img src={item.image} alt=" image" className="w-[22px]" />
-                </Box>
-              </Box>
-              <CardFooter>
-                <Box
-                  className={` ${parseInt(item?.buttonText) < 0 ? "bg-red-50" : "bg-green-50"} border space-x-1 py-1 px-1 flex items-center justify-center rounded-md`}>
-                  {parseInt(item?.buttonText) > 0 ? (
-                    <IoIosTrendingUp className="text-green-500" size={10} />
-                  ) : (
-                    <IoIosTrendingDown className="text-red-500" size={10} />
-                  )}
-                  <span
-                    className={`text-[9px] ${parseInt(item?.buttonText) < 0 ? "text-red-500" : "text-green-500"}`}>
-                    {item?.buttonText}
-                  </span>
-                </Box>
-              </CardFooter>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
-    </Grid>
+    <div className="space-y-3">
+      {cards.map((card, i) => (
+        <div
+          key={i}
+          className="bg-white rounded-xl border border-gray-100 p-4 hover:border-primary/20 transition-all">
+          <div className="flex items-start justify-between mb-2">
+            <div className={`w-9 h-9 rounded-xl ${card.color} flex items-center justify-center`}>
+              <img src={card.icon} alt="" className="w-4 h-4" />
+            </div>
+            <span
+              className={`flex items-center gap-0.5 text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                card.positive
+                  ? "bg-green-50 text-green-600"
+                  : "bg-red-50 text-red-500"
+              }`}>
+              {card.positive ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
+              {card.pct}
+            </span>
+          </div>
+          <p className="text-[10px] text-gray-400 font-medium">{card.title}</p>
+          <p
+            className="text-lg font-bold text-gray-900 mt-0.5"
+            style={{ fontFamily: "eczar" }}>
+            {card.value}
+          </p>
+        </div>
+      ))}
+    </div>
   );
 };
 

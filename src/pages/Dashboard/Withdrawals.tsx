@@ -1,4 +1,3 @@
-import { WithdrawalForm } from "@/components/dashboard_components/forms/WithdrawalForm";
 import WithdrawalTable from "@/components/dashboard_components/tables/WithdrawalTable";
 import WalletCardDisplay from "@/components/dashboard_components/WalletCardDisplay";
 import Loader from "@/helpers/Loader";
@@ -7,7 +6,6 @@ import {
   FetchUsersWithdrawals,
 } from "@/services/features/wallet/walletSlice";
 import { AppDispatch } from "@/store";
-import { Box, Grid } from "@mui/material";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -19,28 +17,32 @@ const Withdrawals = () => {
     dispatch(FetchUsersWithdrawals());
     dispatch(FetchUsersrWallet());
   }, []);
+
+  if (isLoading && !Withdrawals) return <Loader />;
+
   return (
-    <Box>
-      {isLoading && !Withdrawals ? (
-        <Loader />
-      ) : (
-        <>
-          <Box className="mb-5">
-            <WithdrawalForm />
-          </Box>
-          <Grid container spacing={4}>
-            <Grid item xs={12} sm={12} md={3}>
-              <WalletCardDisplay />
-            </Grid>
-            <Grid item xs={12} sm={12} md={9}>
-              <Box className=" border-gray-200  w-full  shadow-md border px-5 rounded-lg sm:overflow-x-auto overflow-x-scroll">
-                <WithdrawalTable />
-              </Box>
-            </Grid>
-          </Grid>
-        </>
-      )}
-    </Box>
+    <div>
+      <div className="mb-5">
+        <h1
+          className="text-lg font-bold text-gray-900"
+          style={{ fontFamily: "eczar" }}>
+          Withdrawals
+        </h1>
+        <p className="text-xs text-gray-400 mt-0.5">
+          Review and manage withdrawal requests
+        </p>
+      </div>
+
+      <div className="grid sm:grid-cols-[220px_1fr] grid-cols-1 gap-4">
+        {/* Stats sidebar */}
+        <WalletCardDisplay />
+
+        {/* Table */}
+        <div className="bg-white rounded-xl border border-gray-100 overflow-hidden">
+          <WithdrawalTable />
+        </div>
+      </div>
+    </div>
   );
 };
 
