@@ -31,20 +31,20 @@ const ForgotPassword = () => {
 
   return (
     <div className="w-full">
-      <div className="mb-6">
+      <div className="mb-3">
         <h1
-          className="text-2xl font-bold text-gray-900"
+          className="text-xl font-bold text-gray-900"
           style={{ fontFamily: "eczar" }}>
           Forgot Password?
         </h1>
-        <p className="text-gray-400 text-sm mt-1 leading-relaxed">
+        <p className="text-gray-400 text-xs mt-0.5 leading-relaxed">
           Enter your email and we'll send you a reset link.
         </p>
       </div>
 
       <ForgotPasswordForm />
 
-      <div className="mt-5">
+      <div className="mt-3">
         <p className="text-xs text-gray-500">
           Remember your password?{" "}
           <Link
